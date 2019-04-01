@@ -29,7 +29,8 @@ matrix:
 env:
   global:
     - TRAVIS_CI_PATH=$(pwd)   
-      
+before_install:
+  - pip install --user cpp-coveralls      
 install:
   # Download re2 from source because Ubuntu Trusty (the newest version of Ubuntu
   # in Travis-CI) does not include a package. Packages from newer releases of
