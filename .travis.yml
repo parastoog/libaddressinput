@@ -40,10 +40,11 @@ install:
   - env DESTDIR="$HOME" make -C re2 install
 before_script:
   - git submodule update
-  - cd $TRAVIS_CI_PATH/googletest/googletest
   - echo ${PATH}
+  - cd ../googletest/googletest
   - g++ -std=c++11 -isystem include -pthread -c src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
+  - cd ../../libaddressinput
 script:
   - cd cpp
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib" GYP_GENERATORS="ninja" gyp --depth .
