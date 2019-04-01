@@ -48,7 +48,7 @@ before_script:
   - ar -rv libgtest.a gtest-all.o
 script:
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd)" \
-  CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR}" GYP_GENERATORS="ninja" gyp --depth .
+  CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR}" GYP_GENERATORS="ninja"  gyp --depth .
   - ninja -C out/Default
 after_script:
   - env LD_LIBRARY_PATH="$HOME/usr/local/lib" out/Default/unit_tests
