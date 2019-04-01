@@ -40,7 +40,9 @@ install:
   - env DESTDIR="$HOME" make -C re2 install
 before_script:
   - git submodule update
-  - g++ -std=c++11 -isystem googletest/include -I$googletest -pthread -c googletest/src/gtest-all.cc
+  - cd $TRAVIS_CI_PATH/googletest/googletest
+  - echo ${PATH}
+  - g++ -std=c++11 -isystem include -pthread -c src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
 script:
   - cd cpp
