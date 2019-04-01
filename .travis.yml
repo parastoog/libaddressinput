@@ -47,6 +47,7 @@ before_script:
   - GTEST_DIR=${TRAVIS_CI_PATH}/googletest/googletest
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
+  - ln -s libgtest.a /usr/local/lib/gtest/libgtest.a
 script:
   - cd cpp
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib" GYP_GENERATORS="ninja" gyp --depth .
