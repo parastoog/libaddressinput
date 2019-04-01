@@ -21,6 +21,49 @@ cache: ccache
 addons:
   apt:
     packages: gyp ninja-build python
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      group: deprecated-2017Q3
+      before_install: chmod -R +x ./ci/*platformio.sh 
+      install: ./ci/install-platformio.sh
+      script: ./ci/build-platformio.sh      
+    - os: linux
+      compiler: gcc
+      sudo : true
+      install: ./ci/install-linux.sh && ./ci/log-config.sh
+      script: ./ci/build-linux-bazel.sh
+    - os: linux
+      compiler: clang
+      sudo : true
+      install: ./ci/install-linux.sh && ./ci/log-config.sh
+      script: ./ci/build-linux-bazel.sh
+    - os: linux
+      group: deprecated-2017Q4
+      compiler: gcc
+      install: ./ci/install-linux.sh && ./ci/log-config.sh
+      script: ./ci/build-linux-autotools.sh
+      env: VERBOSE=1 CXXFLAGS=-std=c++11
+    - os: linux
+      group: deprecated-2017Q4
+      compiler: gcc
+      env: BUILD_TYPE=Debug VERBOSE=1 CXX_FLAGS=-std=c++11 
+    - os: linux
+      group: deprecated-2017Q4
+      compiler: clang
+      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 -Wgnu-zero-variadic-macro-arguments
+    - os: linux
+      compiler: clang
+      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 NO_EXCEPTION=ON NO_RTTI=ON COMPILER_IS_GNUCXX=ON
+    - os: osx
+      compiler: gcc
+      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 HOMEBREW_LOGS=~/homebrew-logs HOMEBREW_TEMP=~/homebrew-temp
+    - os: osx
+      compiler: clang
+      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 HOMEBREW_LOGS=~/homebrew-logs HOMEBREW_TEMP=~/homebrew-temp      
+    
 install:
   # Download re2 from source because Ubuntu Trusty (the newest version of Ubuntu
   # in Travis-CI) does not include a package. Packages from newer releases of
@@ -30,7 +73,7 @@ install:
   - make -C re2
   - env DESTDIR="$HOME" make -C re2 install
   - git clone https://github.com/google/googletest.git
-  - env DESTDIR="$HOME" make -C gtest install
+  - env DESTDIR="$HOME" make -C googletest install
 script:
   - cd cpp
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib" GYP_GENERATORS="ninja" gyp --depth .
