@@ -45,13 +45,10 @@ install:
 before_script:
   - git submodule update
   - GTEST_DIR=${TRAVIS_CI_PATH}/googletest/googletest
+  - cd cpp
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
 script:
-  - cd cpp
-  - export CXXFLAGS="$CXXFLAGS -I${GTEST_DIR}/include"
-  # Set linker flags
-  - export LDFLAGS="-lgtest_main -lgtest -lpthread -ldl -L$GTEST_DIR/lib"
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib" GYP_GENERATORS="ninja" gyp --depth .
   - ninja -C out/Default
 after_script:
