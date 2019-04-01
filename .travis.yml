@@ -30,7 +30,10 @@ install:
   - make -C re2
   - env DESTDIR="$HOME" make -C re2 install
   - git clone https://github.com/google/googletest.git
-  - cd ../../google/googletest
+  - cd ..
+  - ls
+  - cd ..
+  - ls
   - make -C gtest
   - env DESTDIR="$HOME" make -C gtest install
 script:
