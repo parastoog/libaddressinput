@@ -46,7 +46,7 @@ before_script:
   - cd $TRAVIS_CI_PATH/googletest/googletest
   - g++ -std=c++11 -isystem include -I -pthread -c src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
-  - cd ../../libaddressinput
+  - cd $TRAVIS_CI_PATH
 script:
   - cd cpp
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib" GYP_GENERATORS="ninja" gyp --depth .
