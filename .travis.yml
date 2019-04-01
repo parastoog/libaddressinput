@@ -44,7 +44,7 @@ install:
 before_script:
   - git submodule update
   - cd $TRAVIS_CI_PATH/googletest/googletest
-  - g++ -std=c++11 -isystem include -pthread -c src/gtest-all.cc
+  - g++ -std=c++11 -isystem include -I -pthread -c src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
   - cd ../../libaddressinput
 script:
