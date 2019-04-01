@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 language: cpp
 os: linux
 dist: trusty
@@ -27,6 +26,10 @@ matrix:
       sudo : true
       install: ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
       script: ./googletest/ci/build-linux-bazel.sh
+env:
+  global:
+    - TRAVIS_CI_PATH=$(pwd)    
+      
 install:
   # Download re2 from source because Ubuntu Trusty (the newest version of Ubuntu
   # in Travis-CI) does not include a package. Packages from newer releases of
@@ -40,10 +43,7 @@ install:
   - env DESTDIR="$HOME" make -C re2 install
 before_script:
   - git submodule update
-  - cd ..
-  - ls
-  - cd googletest
-  - cd googletest
+  - cd $TRAVIS_CI_PATH/googletest/googletest
   - g++ -std=c++11 -isystem include -pthread -c src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
   - cd ../../libaddressinput
