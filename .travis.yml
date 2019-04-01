@@ -40,7 +40,7 @@ install:
   - env DESTDIR="$HOME" make -C re2 install
 before_script:
   - git submodule update
-  - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
+  - g++ -std=c++11 -isystem googletest/include -I${GTEST_DIR} -pthread -c googletest/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
 script:
   - cd cpp
