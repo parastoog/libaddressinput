@@ -22,10 +22,11 @@ addons:
   apt:
     packages: gyp ninja-build python
 matrix:
-  include:
     - os: linux
-      compiler: clang
-      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 NO_EXCEPTION=ON NO_RTTI=ON COMPILER_IS_GNUCXX=ON    
+      compiler: gcc
+      sudo : true
+      install: ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
+      script: ./googletest/ci/build-linux-bazel.sh
 install:
   # Download re2 from source because Ubuntu Trusty (the newest version of Ubuntu
   # in Travis-CI) does not include a package. Packages from newer releases of
@@ -35,7 +36,7 @@ install:
   - make -C re2
   - env DESTDIR="$HOME" make -C re2 install
   - git clone https://github.com/google/googletest.git
-  - cmake /home/travis/build/parastoog/googletest
+  - cmake googletest
 script:
   - cd cpp
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib" GYP_GENERATORS="ninja" gyp --depth .
