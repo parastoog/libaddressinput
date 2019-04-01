@@ -28,7 +28,7 @@ matrix:
       script: ./googletest/ci/build-linux-bazel.sh
 env:
   global:
-    - TRAVIS_CI_PATH=$(pwd)    
+    - TRAVIS_CI_PATH=$(pwd)   
       
 install:
   # Download re2 from source because Ubuntu Trusty (the newest version of Ubuntu
@@ -43,10 +43,9 @@ install:
   - env DESTDIR="$HOME" make -C re2 install
 before_script:
   - git submodule update
-  - cd $TRAVIS_CI_PATH/googletest/googletest
-  - g++ -std=c++11 -isystem include -I -pthread -c src/gtest-all.cc
+  - GTEST_DIR=TRAVIS_CI_PATH/googletest/googletest
+  - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
-  - cd $TRAVIS_CI_PATH
 script:
   - cd cpp
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib" GYP_GENERATORS="ninja" gyp --depth .
