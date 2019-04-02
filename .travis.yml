@@ -26,11 +26,11 @@ matrix:
       sudo : true
       install: ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
       script: ./googletest/ci/build-linux-bazel.sh
-      - os: linux
+    - os: linux
       compiler: clang
       sudo : true
       install: ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
-      script: ./googletest/ci/build-linux-bazel.sh    
+      script: ./googletest/ci/build-linux-bazel.sh
 env:
   global:
     - TRAVIS_CI_PATH=$(pwd)   
