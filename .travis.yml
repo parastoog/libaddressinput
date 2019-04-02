@@ -47,8 +47,7 @@ before_script:
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
 script:
-  - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd)" \
-  CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR}" GYP_GENERATORS="ninja"  gyp --depth .
+  - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd)" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR}" GYP_GENERATORS="ninja"  gyp --depth .
   - ninja -C out/Default
 after_script:
   - env LD_LIBRARY_PATH="$HOME/usr/local/lib" out/Default/unit_tests
