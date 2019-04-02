@@ -53,7 +53,7 @@ before_script:
   - cd ${GTEST_DIR}/make
   - make
 script:
-  - cd cpp
+  - cd ${TRAVIS_CI_PATH}/cpp
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR}" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR}" GYP_GENERATORS="ninja"  gyp --depth .
   - ninja -C out/Default
 after_script:
