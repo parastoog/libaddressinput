@@ -50,6 +50,8 @@ before_script:
   - GTEST_DIR=${TRAVIS_CI_PATH}/googletest/googletest
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
+  - cd ${GTEST_DIR}/make
+  - make
 script:
   - cd cpp
   - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR}" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR}" GYP_GENERATORS="ninja"  gyp --depth .
