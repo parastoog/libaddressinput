@@ -54,7 +54,7 @@ before_script:
   - make
 script:
   - cd ${TRAVIS_CI_PATH}/cpp
-  - env CXXFLAGS="-I$HOME/usr/local/include" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR}" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR}" GYP_GENERATORS="ninja"  gyp --depth .
+  - env CXXFLAGS="-I$HOME/usr/local/include -I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/make" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR} -L${GTEST_DIR}/make" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/make" GYP_GENERATORS="ninja"  gyp --depth .
   - ninja -C out/Default
 after_script:
   - env LD_LIBRARY_PATH="$HOME/usr/local/lib" out/Default/unit_tests
