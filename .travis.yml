@@ -26,7 +26,6 @@ matrix:
       sudo : true
       install: ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
       script: ./googletest/ci/build-linux-bazel.sh
-      
       - os: linux
       compiler: clang
       sudo : true
