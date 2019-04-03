@@ -47,14 +47,16 @@ install:
   - git clone https://github.com/google/googletest.git
 before_script:
   - git submodule update
+  - ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
   - GTEST_DIR=${TRAVIS_CI_PATH}/googletest/googletest
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
   - cp -a libgtest.a $HOME/usr/local/lib/
   - cd ${GTEST_DIR}/make
   - make
-script:
   - cd ${TRAVIS_CI_PATH}/cpp
+  - ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
+script:
   - env CXXFLAGS="-I$HOME/usr/local/include -I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/make" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR} -L${GTEST_DIR}/make" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/make" GYP_GENERATORS="ninja"  gyp --depth .
   - ninja -C out/Default
 after_script:
