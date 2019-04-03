@@ -51,7 +51,6 @@ before_script:
   - echo $GTEST_DIR
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
-  - sudo cp -a gtest-all.o libgtest.a $HOME/usr/local/lib/
   - cd ${GTEST_DIR}/make
   - make
   - cd ${TRAVIS_CI_PATH}/cpp
