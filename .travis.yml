@@ -20,17 +20,6 @@ cache: ccache
 addons:
   apt:
     packages: gyp ninja-build python
-matrix:
-    - os: linux
-      compiler: gcc
-      sudo : true
-      install: ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
-      script: ./googletest/ci/build-linux-bazel.sh
-    - os: linux
-      compiler: clang
-      sudo : true
-      install: ./googletest/ci/install-linux.sh && ./googletest/ci/log-config.sh
-      script: ./googletest/ci/build-linux-bazel.sh
 env:
   global:
     - TRAVIS_CI_PATH=$(pwd)   
@@ -41,17 +30,20 @@ install:
   # in Travis-CI) does not include a package. Packages from newer releases of
   # Ubuntu are not binary compatible with Trusty. The re2 shared library is
   # installed into $HOME/usr/local/lib.
+  - git clone https://github.com/google/re2.git
+  - make -C re2
+  - env DESTDIR="$HOME" make -C re2 install
   - git clone https://github.com/google/googletest.git
-  - mv ${TRAVIS_CI_PATH}/googletest/googletest ${TRAVIS_CI_PATH}/googletest/gtest
-  - sudo cp -r ${TRAVIS_CI_PATH}/googletest/gtest /usr/local/src
 before_script:
   - git submodule update
-  - GTEST_DIR=/usr/local/src/gtest
+  - GTEST_DIR=${TRAVIS_CI_PATH}/googletest/googletest
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
-  - cd ${TRAVIS_CI_PATH}/cpp
+  - cd ${GTEST_DIR}/make
+  - make
 script:
-  - env CXXFLAGS="-I$HOME/usr/local/include -I${GTEST_DIR}/src -I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/src" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR} -L${GTEST_DIR}/src" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/src" GYP_GENERATORS="ninja"  gyp --depth .
+  - cd ${TRAVIS_CI_PATH}/cpp
+  - env CXXFLAGS="-I$HOME/usr/local/include -I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/make" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR} -L${GTEST_DIR}/make" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/make" GYP_GENERATORS="ninja"  gyp --depth .
   - ninja -C out/Default
 after_script:
   - env LD_LIBRARY_PATH="$HOME/usr/local/lib" out/Default/unit_tests
