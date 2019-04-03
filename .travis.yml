@@ -42,9 +42,6 @@ install:
   # in Travis-CI) does not include a package. Packages from newer releases of
   # Ubuntu are not binary compatible with Trusty. The re2 shared library is
   # installed into $HOME/usr/local/lib.
-  - git clone https://github.com/google/re2.git
-  - make -C re2
-  - env DESTDIR="$HOME" make -C re2 install
   - git clone https://github.com/google/googletest.git
   - mv ${TRAVIS_CI_PATH}/googletest/googletest ${TRAVIS_CI_PATH}/googletest/gtest
   - sudo cp -r ${TRAVIS_CI_PATH}/googletest/gtest /usr/local/src
@@ -54,9 +51,9 @@ before_script:
   - echo $GTEST_DIR
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
-  - sudo cp -a libgtest.a gtest-all.o libgtest.a $HOME/usr/local/lib/
-  - sudo cd ${GTEST_DIR}/make
-  - sudo make
+  - sudo cp -a gtest-all.o libgtest.a $HOME/usr/local/lib/
+  - cd ${GTEST_DIR}/make
+  - make
   - cd ${TRAVIS_CI_PATH}/cpp
 script:
   - env CXXFLAGS="-I$HOME/usr/local/include -I${GTEST_DIR}/src -I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/src" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR} -L${GTEST_DIR}/src" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/src" GYP_GENERATORS="ninja"  gyp --depth .
