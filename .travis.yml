@@ -34,6 +34,7 @@ matrix:
 env:
   global:
     - TRAVIS_CI_PATH=$(pwd)   
+    - PATH=/usr/lib/src:$PATH
 before_install:
   - pip install --user cpp-coveralls      
 install:
@@ -53,9 +54,9 @@ before_script:
   - echo $GTEST_DIR
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
-  - cp -a libgtest.a gtest-all.o libgtest.a $HOME/usr/local/lib/
-  - cd ${GTEST_DIR}/make
-  - env DESTDIR="$HOME" make
+  - sudo cp -a libgtest.a gtest-all.o libgtest.a $HOME/usr/local/lib/
+  - sudo cd ${GTEST_DIR}/make
+  - sudo make
   - cd ${TRAVIS_CI_PATH}/cpp
 script:
   - env CXXFLAGS="-I$HOME/usr/local/include -I${GTEST_DIR}/src -I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/src" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR} -L${GTEST_DIR}/src" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/src" GYP_GENERATORS="ninja"  gyp --depth .
