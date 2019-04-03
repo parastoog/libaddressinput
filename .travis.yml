@@ -50,7 +50,7 @@ install:
   - cp -r ${TRAVIS_CI_PATH}/googletest/gtest $TRAVIS_CI_PATH/src
 before_script:
   - git submodule update
-  - GTEST_DIR=${TRAVIS_CI_PATH}/googletest/googletest
+  - GTEST_DIR=$TRAVIS_CI_PATH/src/gtest
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
   - cp -a libgtest.a gtest-all.o libgtest.a $HOME/usr/local/lib/
