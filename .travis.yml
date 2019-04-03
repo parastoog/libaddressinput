@@ -17,6 +17,16 @@ dist: trusty
 sudo: false
 compiler: clang
 cache: ccache
+
+matrix:
+  include:
+    - # Generate code coverage information and upload to codecov.io.
+      os: linux
+      compiler: clang
+      env:
+        BUILD_TYPE=Coverage
+        DISTRO=ubuntu
+        DISTRO_VERSION=18.04
 addons:
   apt:
     packages: gyp ninja-build python
