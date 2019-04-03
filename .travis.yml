@@ -44,14 +44,13 @@ install:
   - git clone https://github.com/google/re2.git
   - make -C re2
   - env DESTDIR="$HOME" make -C re2 install
-  - mkdir $HOME/usr/local/src
-  - echo $HOME
+  - mkdir /usr/local/src
   - git clone https://github.com/google/googletest.git
   - mv ${TRAVIS_CI_PATH}/googletest/googletest ${TRAVIS_CI_PATH}/googletest/gtest
-  - cp -r ${TRAVIS_CI_PATH}/googletest/gtest $HOME/usr/local/src
+  - cp -r ${TRAVIS_CI_PATH}/googletest/gtest /usr/local/src
 before_script:
   - git submodule update
-  - GTEST_DIR=$HOME/usr/local/src/gtest
+  - GTEST_DIR=/usr/local/src/gtest
   - echo $GTEST_DIR
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
