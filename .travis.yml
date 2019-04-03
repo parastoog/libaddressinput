@@ -45,12 +45,14 @@ install:
   - make -C re2
   - env DESTDIR="$HOME" make -C re2 install
   - mkdir $HOME/src
+  - echo $HOME
   - git clone https://github.com/google/googletest.git
   - mv ${TRAVIS_CI_PATH}/googletest/googletest ${TRAVIS_CI_PATH}/googletest/gtest
   - cp -r ${TRAVIS_CI_PATH}/googletest/gtest $HOME/src
 before_script:
   - git submodule update
   - GTEST_DIR=$HOME/src/gtest
+  - echo $GTEST_DIR
   - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
   - ar -rv libgtest.a gtest-all.o
   - cp -a libgtest.a gtest-all.o libgtest.a $HOME/usr/local/lib/
