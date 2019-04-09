@@ -17,24 +17,35 @@ dist: trusty
 sudo: false
 compiler: clang
 cache: ccache
+group: travis_latest
 
+# TODO(#19) - this is a skeleton matrix, needs to be designed and completed.
+# TODO(#62) - enable a SANITIZE_MEMORY=yes build when we eliminate the false positives
 matrix:
   include:
     - # Generate code coverage information and upload to codecov.io.
       os: linux
-      compiler: clang
+      compiler: gcc
       env:
         BUILD_TYPE=Coverage
         DISTRO=ubuntu
         DISTRO_VERSION=18.04
-addons:
-  apt:
-    packages: gyp ninja-build python
+    - # Compile with tests disabled, run style checks and docs.
+      os: linux
+      compiler: gcc
+      env:
+        BUILD_TESTING=no
+        CHECK_STYLE=yes
+        GENERATE_DOCS=yes
+        DISTRO=ubuntu
+        DISTRO_VERSION=18.04
+
+script:
+  - ci/travis/build-linux.sh
+
 env:
   global:
     - TRAVIS_CI_PATH=$(pwd)   
-before_install:
-  - pip install --user cpp-coveralls      
 install:
   # Download re2 from source because Ubuntu Trusty (the newest version of Ubuntu
   # in Travis-CI) does not include a package. Packages from newer releases of
@@ -44,16 +55,50 @@ install:
   - make -C re2
   - env DESTDIR="$HOME" make -C re2 install
   - git clone https://github.com/google/googletest.git
-before_script:
-  - git submodule update
-  - GTEST_DIR=${TRAVIS_CI_PATH}/googletest/googletest
-  - g++ -std=c++11 -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
-  - ar -rv libgtest.a gtest-all.o
-  - cd ${GTEST_DIR}/make
-  - make
+  
 script:
-  - cd ${TRAVIS_CI_PATH}/cpp
-  - env CXXFLAGS="-I$HOME/usr/local/include -I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/make" LDFLAGS="-L$HOME/usr/local/lib -L$(pwd) -L${GTEST_DIR}/include -L${GTEST_DIR} -L${GTEST_DIR}/make" CPPFLAGS="-I${GTEST_DIR}/include -I${GTEST_DIR} -I${GTEST_DIR}/make" GYP_GENERATORS="ninja"  gyp --depth .
-  - ninja -C out/Default
-after_script:
-  - env LD_LIBRARY_PATH="$HOME/usr/local/lib" out/Default/unit_tests
+ - ci/travis/build-linux.sh
+
+# We do not need to recursively extract the submodules. This saves some time in
+# the builds, the default install step then performs a lighter weight module
+# initialization than what Travis does by default.
+git:
+  submodules: false
+
+install:
+  # The git default is to recurse, override it because we do not need to and
+  # that saves time.
+  - travis_wait 20 /bin/sh -c "ci/install-retry.sh ci/travis/install-linux.sh >cmake-out/install-linux.log 2>&1"
+  # Download re2 from source because Ubuntu Trusty (the newest version of Ubuntu
+  # in Travis-CI) does not include a package. Packages from newer releases of
+  # Ubuntu are not binary compatible with Trusty. The re2 shared library is
+  # installed into $HOME/usr/local/lib.
+  - git clone https://github.com/google/re2.git
+  - make -C re2
+  - env DESTDIR="$HOME" make -C re2 install
+  - git clone https://github.com/google/googletest.git
+
+after_success:
+  - ci/travis/upload-codecov.sh
+  - ci/travis/upload-docs.sh
+  - ci/travis/dump-reports.sh
+
+after_failure:
+  - ci/travis/dump-reports.sh
+  - ci/travis/dump-logs.sh
+ 
+cache:
+  directories:
+    # Cache the Bazel directories, in builds that do not use Bazel this is
+    # empty and trivial to cache.
+    - $HOME/.cache/bazel
+    - cmake-out/ccache
+  timeout: 900
+
+before_cache:
+  # Do not save the Bazel installation, reinstall each time, it fails to install
+  # if the installation is in the cache.
+  - rm -fr ${HOME}/.cache/bazel/_bazel_${USER}/install
+
+notifications:
+  email: false
